@@ -12,6 +12,21 @@ class Author(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
     # Add validators 
+    @validates('name')
+    def validate_name(self, key, name):
+        if not name:
+            raise ValueError("Name cannot be empty")
+        elif Author.query.filter_by(name = name).first():
+            raise ValueError("Name must be unique")
+        return name
+
+    @validates('phone_number')
+    def validate_phone(self, key, phone_number):
+        if len(phone_number) != 10:
+            raise ValueError("Phone number must be equal to 10 digits")
+        if not phone_number.isdigit():
+            raise ValueError("Phone number must contain only numbers")
+        return phone_number
 
     def __repr__(self):
         return f'Author(id={self.id}, name={self.name})'
@@ -27,7 +42,10 @@ class Post(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    # Add validators  
+    # Add validators 
+    @validates('content')
+    def validate_content(self, key, content):
+        
 
 
     def __repr__(self):
